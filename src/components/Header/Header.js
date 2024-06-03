@@ -8,7 +8,7 @@ const Header = ({  onLogout }) => {
   const navigate = useNavigate();
  const [username, setUserName] = useState('ABCD')
  onLogout = ()=> {
-    navigate('/asset/login')
+    navigate('/login')
  }
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);

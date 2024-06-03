@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Box, Button, ButtonGroup } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import "./Assets.css"
-import AddAssetModal from './AddAssetModal';
+import AddEmployeeModal from './AddEmployeeModal'; // Import the AddEmployeeModal component
+import "./Employee.css"; // Add your CSS file for Employee styling
+
 const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
@@ -19,79 +20,73 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Assets() {
+function Employee() {
     const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
 
     const handleOpenModal = () => {
         setOpenModal(true);
     };
+    const handleEdit = (id) => {
+        // Implement edit logic here
+        console.log(`Edit employee with ID: ${id}`);
+    };
+    
+
+    // Sample data for the DataGrid
     const rows = [
-        { id: 1, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
-        { id: 2, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
+        { id: 1, Name: 'John Doe', Mobile: '1234567890', Designation: 'Software Engineer', Department: 'Engineering', Location: 'Airoli', Status: 'Active' },
+        { id: 2, Name: 'Jane Doe', Mobile: '9876543210', Designation: 'HR Manager', Department: 'HR', Location: 'Borivali', Status: 'Inactive' },
         // Add more rows as needed
     ];
 
+    // Define columns for the DataGrid
     const columns = [
-        { field: 'name', headerName: 'Name', width: 150, sortable: true },
-        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true },
-        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true },
-        { field: 'location', headerName: 'Location', width: 150, sortable: true },
+        { field: 'Name', headerName: 'Name', width: 200, sortable: true },
+        { field: 'Mobile', headerName: 'Mobile', width: 150, sortable: true },
+        { field: 'Designation', headerName: 'Designation', width: 200, sortable: true },
+        { field: 'Department', headerName: 'Department', width: 200, sortable: true },
+        { field: 'Location', headerName: 'Location', width: 150, sortable: true },
+        { field: 'Status', headerName: 'Status', width: 150, sortable: true },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 300,
+            width: 200,
             sortable: false,
             renderCell: (params) => (
-                <Box>
-                    <Button variant="contained" color="primary" style={{ marginRight: 8 }}>
-                        View
-                    </Button>
-                    <Button variant="contained" color="secondary" style={{ marginRight: 8 }}>
-                        Edit
-                    </Button>
-                    <Button variant="contained" color="error">
-                        Delete
-                    </Button>
-                </Box>
+                <Button variant="contained" color="primary" onClick={() => handleEdit(params.row.id)}>Edit</Button>
             ),
         },
     ];
 
+    // State for filtering and searching
     const [filterValue, setFilterValue] = useState('');
     const [filteredRows, setFilteredRows] = useState(rows);
 
+    // Function to handle search filter
     const handleSearch = (event) => {
         const { value } = event.target;
         const lowercaseValue = value.toLowerCase();
         setFilterValue(lowercaseValue);
 
         const filteredRows = rows.filter(row =>
-            row.name.toLowerCase().includes(lowercaseValue) ||
-            row.serialNumber.toLowerCase().includes(lowercaseValue) ||
-            row.location.toLowerCase().includes(lowercaseValue) ||
-            row.assignedTo.toLowerCase().includes(lowercaseValue)
+            Object.values(row).some(value =>
+                String(value).toLowerCase().includes(lowercaseValue)
+            )
         );
 
         setFilteredRows(filteredRows);
     };
 
+    // Function to reset filters
     const resetFilters = () => {
         setFilterValue('');
         setFilteredRows(rows);
     };
+
+    // Function to handle closing of the modal
     const handleClose = () => {
-        setOpenModal(false)
-    }
-
-    const filterAssigned = () => {
-        const assignedRows = rows.filter(row => row.assignedTo !== 'Unassigned');
-        setFilteredRows(assignedRows);
-    };
-
-    const filterUnassigned = () => {
-        const unassignedRows = rows.filter(row => row.assignedTo === 'Unassigned');
-        setFilteredRows(unassignedRows);
+        setOpenModal(false);
     };
 
     return (
@@ -107,7 +102,7 @@ function Assets() {
                             startIcon={<AddCircleOutlineIcon />} // Add the icon as startIcon
                             onClick={handleOpenModal}
                         >
-                            Add Asset
+                            Add Employee
                         </Button>
                         <TextField
                             label="Search"
@@ -118,9 +113,6 @@ function Assets() {
                         {/* </Box> */}
                         {/* <Box display="flex" alignItems="center" justifyContent={'centr'}> */}
                         <ButtonGroup variant="contained" style={{ boxShadow: 'none' }}>
-                            <Button className="btn-border" onClick={filterUnassigned}>Unassigned</Button>
-                            <Button className="btn-border" onClick={filterAssigned}>Assigned</Button>
-                            <Button className="btn-border" onClick={filterUnassigned}>Scrap</Button>
                             <Button className="btn-border" variant="contained" onClick={resetFilters}>
                                 Reset
                             </Button>
@@ -139,11 +131,11 @@ function Assets() {
                         </div>
                     </div>
                 </Container>
-                <AddAssetModal open={openModal} handleClose={handleClose} />
+                <AddEmployeeModal open={openModal} handleClose={handleClose} />
 
             </main>
         </div>
     );
 }
 
-export default Assets;
+export default Employee;

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 // import { API_URL } from '../services/config';
 
 import './Login.css'; // Import your CSS file
@@ -28,6 +28,10 @@ const Login = () => {
     employeeId: '',
     password: '',
   });
+   useEffect(()=> {
+    localStorage.removeItem('isLogin')
+   },[])
+
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -37,44 +41,58 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    navigate('/asset/dashboard')
-    // fetch(`${API_URL}/signin`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(formData),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log('Sign In successful:', data);
-    //     if (data && data.token) {
-    //       localStorage.setItem('token', data.token);
-    //       localStorage.setItem('isLogin', true);
+    localStorage.setItem('isLogin', 'yes')
+    try {
+      // Uncomment this section and replace API_URL with your actual API URL
+      /*
+      const response = await fetch(`${API_URL}/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('isLogin', true);
+  
+          let user = {
+            username: data.name,
+            email: data.email_id,
+            role: data.role,
+          };
+          localStorage.setItem('user', JSON.stringify(user));
+  
+          if (data.role !== 'ADMIN') {
+            navigate('/');
+          } else {
+            navigate('/admin');
+          }
+          toast.success('Logged in successfully');
+          return;
+        }
+      }
+      
+      throw new Error('Authentication failed');
+      */
 
-    //       let user = {
-    //         username: data.name,
-    //         email: data.email_id,
-    //         role: data.role,
-    //       };
-    //       console.log('user', user);
-    //       localStorage.setItem('user', JSON.stringify(user));
-
-    //       if (data.role !== 'ADMIN') {
-    //         navigate('/');
-    //       } else {
-    //         navigate('/admin');
-    //       }
-    //       toast.success('Logged in successfully');
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error during Sign In:', error);
-    //     toast.error('Login Failed');
-    //   });
+      // Temporary code for testing without API call
+      if (formData.employeeId === 'test' && formData.password === 'password') {
+        localStorage.setItem('isLogin', true);
+        navigate('/dashboard');
+        toast.success('Logged in successfully');
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Error during Sign In:', error);
+      toast.error('Login Failed');
+    }
   };
 
   return (
